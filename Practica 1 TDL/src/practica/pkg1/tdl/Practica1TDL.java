@@ -18,6 +18,7 @@ public class Practica1TDL {
         GUI interfaz = new GUI();
         interfaz.setVisible(true);
         interfaz.setLocationRelativeTo(null);
+        /**El que lo lea es puto**/
     }
     
 }

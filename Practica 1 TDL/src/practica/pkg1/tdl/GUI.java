@@ -6,7 +6,6 @@
 package practica.pkg1.tdl;
 
 import java.util.ArrayList;
-import java.util.Stack;
 import javax.swing.JOptionPane;
 
 
@@ -42,7 +41,7 @@ public class GUI extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         info2 = new javax.swing.JButton();
         estadosText = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        consAF = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -71,10 +70,10 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("Construir automata");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        consAF.setText("Construir automata");
+        consAF.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                consAFActionPerformed(evt);
             }
         });
 
@@ -96,18 +95,18 @@ public class GUI extends javax.swing.JFrame {
                                 .addComponent(info2))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel1)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addGroup(layout.createSequentialGroup()
                                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                             .addGap(57, 57, 57))
-                                        .addComponent(simbolosText, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(simbolosText, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel1))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(info1)))
                         .addGap(19, 19, 19))))
             .addGroup(layout.createSequentialGroup()
                 .addGap(73, 73, 73)
-                .addComponent(jButton1)
+                .addComponent(consAF)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -128,22 +127,24 @@ public class GUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(estadosText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addComponent(consAF)
                 .addGap(32, 32, 32))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //Provee informacion al usuario sobre el campo de texto "Simbolos"
     private void info1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_info1ActionPerformed
         JOptionPane.showMessageDialog(this, "Ingrese los simbolos de entrada separados por coma cada uno.\nEl simbolo coma no esta permitido como silbolo de entrada");
     }//GEN-LAST:event_info1ActionPerformed
 
+    //Provee informacion al usuario sobre el campo de texto "Estados y transiciones"
     private void info2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_info2ActionPerformed
         JOptionPane.showMessageDialog(this,"Se recomienda leer el manual de usuario para conocer el formato\npara ingresar en el campo estados y transiciones ");
     }//GEN-LAST:event_info2ActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    
+    private void consAFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_consAFActionPerformed
         // TODO add your handling code here:
         simbolos = simbolosText.getText();
         estadosTransiciones = estadosText.getText();
@@ -155,40 +156,85 @@ public class GUI extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this,"Ambos campos deben ser llenados");
         }
         else{
-            if(verificarEntrada(simbolos)&& verificarEntrada(estadosTransiciones)){
+            if(verificarEntradaSimbolos(simbolos)&& verificarEntradaEstados(estadosTransiciones)){
                 contruirAutomata(simbolos, estadosTransiciones);
             }
             else{
                 JOptionPane.showMessageDialog(this,"Las hileras ingresaas no cumplen con el formato requerido.");
             }
         }    
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_consAFActionPerformed
 
-    
+    /**
+     * Utiliza los string procesados para contruir el automata expresado en estos
+     * @param simbolosV String que contiene los simbolos del automata
+     * @param estadosV String que contiene los estados y transiciones del automata
+     */
     private void contruirAutomata(String simbolosV, String estadosV){
+        ArrayList lista = new ArrayList();
+        int comas = contarCaracter(simbolosV, ',');
+        String[] aux=new String[comas+1];
         
+        int contador=0;
+        while (contador<=comas) {  
+            if(contador<comas){
+                aux[contador]=simbolosV.substring(0, simbolosV.indexOf(","));
+                simbolosV=simbolosV.substring(simbolosV.indexOf(",")+1);
+                contador++;
+            }
+            else if(contador==comas){
+                aux[contador]=simbolosV.substring(0);
+                contador++;
+            } 
+        }
     }
-    private boolean verificarEntrada(String input){
-        Stack pila = new Stack(); 
-        
-        if(input.substring(0,1).equals(",")||input.substring(0,1).equals("(")||input.substring(0,1).equals(")") ||!input.substring(input.length()-1).equals(")")){
-            return(false);
-        }
-        if(input.contains("()")||input.contains("(,")||input.contains(",)")||input.contains(",,")){
-            return(false);
-        }
-        for (int i = 0; i < input.length(); i++) {
-            if(String.valueOf(input.charAt(i)).equals("(")){
-                pila.push("(");
-            }
-            else if(String.valueOf(input.charAt(i)).equals(")")){
-                pila.pop();
-            }
-        }
-        if(!pila.empty()){
+    
+    /**
+     * Controla algunos casos problematicos que se podria presentar a la hora de recibir 
+     * el string requerido
+     * @param inputSim
+     * @return Retorna true si el string se acepta de lo contrario retorna false
+     */
+    private boolean verificarEntradaSimbolos(String inputSim){
+        if(String.valueOf(inputSim.charAt(0)).equals(",")||String.valueOf(inputSim.charAt(inputSim.length()-1)).equals(",")||inputSim.contains(",,")){
             return(false);
         }
         return(true);
+    }
+    
+    /**
+     * Controla algunos casos problematicos que se podria presentar a la hora de recibir 
+     * el string requerido
+     * @param inputEst String ingresado
+     * @return Retorna true si el string se acepta de lo contrario retorna false
+     */
+    private boolean verificarEntradaEstados(String inputEst){
+        if(String.valueOf(inputEst.charAt(0)).equals(",")||String.valueOf(inputEst.charAt(0)).equals("(")||String.valueOf(inputEst.charAt(0)).equals(")") ||!(String.valueOf(inputEst.charAt(inputEst.length()-1)).equals(")")||String.valueOf(inputEst.charAt(inputEst.length()-1)).equals("/"))){
+            return(false);
+        }
+        if(inputEst.contains("()")||inputEst.contains("(,")||inputEst.contains(",)")||inputEst.contains(",,")){
+            return(false);
+        }
+        if(contarCaracter(inputEst,'(')!=contarCaracter(inputEst, ')')){
+            return(false);
+        }
+        return(true);
+    }
+    
+    /**
+     * Cuenta cuantas veces se repite el caracter ingresado en la hilera ingresada
+     * @param hilera String en el que se busca el caracter
+     * @param caracter Caracter que se busca
+     * @return 
+     */
+    public int contarCaracter(String hilera, char caracter){
+        int contador=0;
+        for (int i = 0; i < hilera.length(); i++) {
+            if(hilera.charAt(i)==caracter){
+                contador++;
+            }
+        }
+        return(contador);
     }
                         
     /**
@@ -227,10 +273,10 @@ public class GUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton consAF;
     private javax.swing.JTextField estadosText;
     private javax.swing.JButton info1;
     private javax.swing.JButton info2;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
