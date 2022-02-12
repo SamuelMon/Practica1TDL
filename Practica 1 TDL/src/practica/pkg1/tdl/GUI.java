@@ -163,7 +163,13 @@ public class GUI extends javax.swing.JFrame {
         }
         else{
             if(verificarEntradaSimbolos(simbolos)&& verificarEntradaEstados(estadosTransiciones)){
-                contruirAutomata(simbolos, estadosTransiciones);
+                if(contruirAutomata(simbolos, estadosTransiciones)){
+                    JOptionPane.showMessageDialog(rootPane, "Su automata se ha construido con exito");
+                    
+                }
+                else{
+                    JOptionPane.showMessageDialog(rootPane, "Hubo un error al construir el automata, es posible que el formato de ingres este incompleto");
+                }
             }
             else{
                 JOptionPane.showMessageDialog(this,"Las hileras ingresaas no cumplen con el formato requerido.");
@@ -176,25 +182,78 @@ public class GUI extends javax.swing.JFrame {
      * @param simbolosV String que contiene los simbolos del automata
      * @param estadosV String que contiene los estados y transiciones del automata
      */
-    private void contruirAutomata(String simbolosV, String estadosV){
+    private boolean contruirAutomata(String simbolosV, String estadosV){
         ArrayList lista = new ArrayList();
         int comas = contarCaracter(simbolosV, ',');
-        String[] aux=new String[comas+1];
+        String[] vectorAux=new String[comas+3];
+
+        vectorAux=simbolosVector(simbolosV, vectorAux);
         
+        lista.add(vectorAux);
+        
+        
+        while (true) {
+            vectorAux = new String[comas+3];
+            int intAux1=estadosV.indexOf("(");          
+            int intAux2=estadosV.indexOf(")");
+            String stringAux="";
+            
+            if(estadosV.charAt(intAux2+1)=='/'){
+                vectorAux[vectorAux.length -1]="1";
+                if(intAux2==estadosV.length()-1){
+                    estadosV=estadosV.substring(0,intAux2+1);
+                }
+                else{
+                    estadosV=estadosV.substring(0,intAux2+1) + estadosV.substring(intAux2+2);
+                }
+                
+            }
+            else{
+                vectorAux[vectorAux.length -1]="0";
+            }
+            
+            vectorAux[0]=simbolosV.substring(0,intAux1);
+            estadosV=estadosV.substring(intAux1+1);
+            
+            intAux2=estadosV.indexOf(")");
+            stringAux = estadosV.substring(0,intAux2);
+            if(contarCaracter(stringAux, ',')!=vectorAux.length -3){
+                return(false);
+            }
+            //Casualmente este metodo que era para los simbolos tambien me sirve 
+            //para esta parte de los estados y transiciones
+            lista.add(simbolosVector(stringAux, vectorAux));
+            
+            if(intAux2==estadosV.length()-1){
+                return(true);
+            }
+            else{
+                estadosV = estadosV.substring(intAux2+2);
+            }
+        }  
+    }
+    
+    /**
+     * Separa los valores contenidos en el string y los convierte en valores del vector ingresado
+     * @param simb
+     * @param vector
+     * @return Retorna un vector con los simbolos ingresados en string
+     */
+    public String[] simbolosVector(String simb,String[] vector){
+        int intAux=vector.length -3;
         int contador=0;
-        while (contador<=comas) {  
-            if(contador<comas){
-                aux[contador]=simbolosV.substring(0, simbolosV.indexOf(","));
-                simbolosV=simbolosV.substring(simbolosV.indexOf(",")+1);
+        while (contador<=intAux) {  
+            if(contador<intAux){
+                vector[contador+1]=simb.substring(0, simb.indexOf(","));
+                simb=simb.substring(simb.indexOf(",")+1);
                 contador++;
             }
-            else if(contador==comas){
-                aux[contador]=simbolosV.substring(0);
+            else if(contador==intAux){
+                vector[contador+1]=simb.substring(0);
                 contador++;
             } 
         }
-        lista.add(aux);
-        aux = new String[comas+2];
+        return(vector);
     }
     
     /**
@@ -217,10 +276,10 @@ public class GUI extends javax.swing.JFrame {
      * @return Retorna true si el string se acepta de lo contrario retorna false
      */
     private boolean verificarEntradaEstados(String inputEst){
-        if(String.valueOf(inputEst.charAt(0)).equals(",")||String.valueOf(inputEst.charAt(0)).equals("(")||String.valueOf(inputEst.charAt(0)).equals(")") ||!(String.valueOf(inputEst.charAt(inputEst.length()-1)).equals(")")||String.valueOf(inputEst.charAt(inputEst.length()-1)).equals("/"))){
+        if(String.valueOf(inputEst.charAt(0)).equals(",")||String.valueOf(inputEst.charAt(0)).equals("-")||String.valueOf(inputEst.charAt(0)).equals("(")||String.valueOf(inputEst.charAt(0)).equals(")") ||String.valueOf(inputEst.charAt(inputEst.length()-1)).equals("-")||!(String.valueOf(inputEst.charAt(inputEst.length()-1)).equals(")")||String.valueOf(inputEst.charAt(inputEst.length()-1)).equals("/"))){
             return(false);
         }
-        if(inputEst.contains("()")||inputEst.contains("(,")||inputEst.contains(",)")||inputEst.contains(",,")){
+        if(inputEst.contains("()")||inputEst.contains("(,")||inputEst.contains(",)")||inputEst.contains(",,")||inputEst.contains("--")||inputEst.contains("(-")||inputEst.contains("-)")){
             return(false);
         }
         if(contarCaracter(inputEst,'(')!=contarCaracter(inputEst, ')')){
