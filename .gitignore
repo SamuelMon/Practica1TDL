@@ -1,3 +1,10 @@
 /Practica 1 TDL/build/
 /Practica 1 TDL/nbproject/private/
+<<<<<<< HEAD
 /Practica 1 TDL/dist/
+=======
+Practica 1 TDL/build/classes/practica/pkg1/tdl/GUI$2.class
+>>>>>>> bbe3c23d1e84ba9cdee49893f8ee90d49ad389a5
+*.class
+Practica 1 TDL/build/classes/practica/pkg1/tdl/GUI.class
+Practica 1 TDL/build/classes/practica/pkg1/tdl/GUI.class
