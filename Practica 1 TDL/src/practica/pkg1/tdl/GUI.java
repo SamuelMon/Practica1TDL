@@ -15,9 +15,9 @@ import javax.swing.JOptionPane;
  */
 public class GUI extends javax.swing.JFrame {
     
-    String simbolos;
-    String estadosTransiciones;
-    String[][] automata;
+    private String simbolos;
+    private String estadosTransiciones;
+    private String[][] automata;
     /**
      * Creates new form GUI
      */
@@ -165,7 +165,10 @@ public class GUI extends javax.swing.JFrame {
             if(verificarEntradaSimbolos(simbolos)&& verificarEntradaEstados(estadosTransiciones)){
                 if(contruirAutomata(simbolos, estadosTransiciones)){
                     JOptionPane.showMessageDialog(rootPane, "Su automata se ha construido con exito");
-                    
+                    GUI2 validacion =new GUI2();
+                    validacion.setVisible(true);
+                    validacion.setLocationRelativeTo(null);
+                    validacion.automata = automata;
                 }
                 else{
                     JOptionPane.showMessageDialog(rootPane, "Hubo un error al construir el automata, es posible que el formato de ingreso le falten o sobren caracteres");
@@ -243,7 +246,11 @@ public class GUI extends javax.swing.JFrame {
         }  
     }
     
-    
+    /**
+     * Con un ArrayList de vectores contruye una matriz que representa unautomata
+     * donde estos vectores son las filas de la matriz.
+     * @param lista 
+     */
     private void arrayLToMatriz(ArrayList<String[]> lista){
         automata = new String[lista.size()][lista.get(0).length];
         
@@ -254,6 +261,7 @@ public class GUI extends javax.swing.JFrame {
             
         }
         
+        //Esto solo es para comprobar en consola que si funciona
         System.out.println("Acá"+lista.size());
         for (int i = 0; i <lista.size(); i++) {
             for (int j = 0; j <lista.get(0).length; j++) {
