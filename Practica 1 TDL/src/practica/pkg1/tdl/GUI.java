@@ -168,7 +168,7 @@ public class GUI extends javax.swing.JFrame {
                     
                 }
                 else{
-                    JOptionPane.showMessageDialog(rootPane, "Hubo un error al construir el automata, es posible que el formato de ingres este incompleto");
+                    JOptionPane.showMessageDialog(rootPane, "Hubo un error al construir el automata, es posible que el formato de ingreso le falten o sobren caracteres");
                 }
             }
             else{
@@ -183,9 +183,12 @@ public class GUI extends javax.swing.JFrame {
      * @param estadosV String que contiene los estados y transiciones del automata
      */
     private boolean contruirAutomata(String simbolosV, String estadosV){
-        ArrayList lista = new ArrayList();
+        ArrayList<String[]> lista = new ArrayList();
         int comas = contarCaracter(simbolosV, ',');
         String[] vectorAux=new String[comas+3];
+        
+        vectorAux[0]=" ";
+        vectorAux[vectorAux.length-1]=" ";
 
         vectorAux=simbolosVector(simbolosV, vectorAux);
         
@@ -198,21 +201,26 @@ public class GUI extends javax.swing.JFrame {
             int intAux2=estadosV.indexOf(")");
             String stringAux="";
             
-            if(estadosV.charAt(intAux2+1)=='/'){
-                vectorAux[vectorAux.length -1]="1";
-                if(intAux2==estadosV.length()-1){
-                    estadosV=estadosV.substring(0,intAux2+1);
+            if(intAux2!=estadosV.length()-1){
+                if(estadosV.charAt(intAux2+1)=='/'){
+                    vectorAux[vectorAux.length -1]="1";
+                    if(intAux2+1==estadosV.length()-1){
+                        estadosV=estadosV.substring(0,intAux2+1);
+                    }
+                    else{
+                        estadosV=estadosV.substring(0,intAux2+1) + estadosV.substring(intAux2+2);
+                    }
+                    
                 }
                 else{
-                    estadosV=estadosV.substring(0,intAux2+1) + estadosV.substring(intAux2+2);
-                }
-                
+                vectorAux[vectorAux.length -1]="0";
+                }    
             }
             else{
                 vectorAux[vectorAux.length -1]="0";
-            }
-            
-            vectorAux[0]=simbolosV.substring(0,intAux1);
+            } 
+
+            vectorAux[0]=estadosV.substring(0,intAux1);
             estadosV=estadosV.substring(intAux1+1);
             
             intAux2=estadosV.indexOf(")");
@@ -224,13 +232,36 @@ public class GUI extends javax.swing.JFrame {
             //para esta parte de los estados y transiciones
             lista.add(simbolosVector(stringAux, vectorAux));
             
+            
             if(intAux2==estadosV.length()-1){
+                arrayLToMatriz(lista);
                 return(true);
             }
             else{
                 estadosV = estadosV.substring(intAux2+2);
             }
         }  
+    }
+    
+    
+    private void arrayLToMatriz(ArrayList<String[]> lista){
+        automata = new String[lista.size()][lista.get(0).length];
+        
+        for (int i = 0; i <lista.size(); i++) {
+            for (int j = 0; j <lista.get(0).length; j++) {
+                automata[i][j]=lista.get(i)[j]; 
+            }
+            
+        }
+        
+        System.out.println("Acá"+lista.size());
+        for (int i = 0; i <lista.size(); i++) {
+            for (int j = 0; j <lista.get(0).length; j++) {
+                System.out.println(automata[i][j]);
+            }
+            
+        }
+        
     }
     
     /**
