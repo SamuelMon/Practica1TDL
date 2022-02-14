@@ -202,11 +202,14 @@ public class GUI extends javax.swing.JFrame {
 
 
             while (true) {
+                //Se encuentran las posicones de los parentesis
                 vectorAux = new String[comas+3];
                 int intAux1=estadosV.indexOf("(");          
                 int intAux2=estadosV.indexOf(")");
                 String stringAux="";
-
+                
+                //si depues del cierre parentesis hay un /, la ultima casilla del vector se hace 
+                //1 y se borra el / del string
                 if(intAux2!=estadosV.length()-1){
                     if(estadosV.charAt(intAux2+1)=='/'){
                         vectorAux[vectorAux.length -1]="1";
@@ -276,12 +279,15 @@ public class GUI extends javax.swing.JFrame {
         estadosV = estadosV + "- ";
 
         while(true){
+            //se encuentra la posicion de el -
             vectorAux = new String[comas+3];
             intAux =estadosV.indexOf("-");
             intAux2 =0;
             String stringAux = estadosV.substring(0,intAux);
             estadosV=estadosV.substring(intAux+1);
 
+            //si depues del cierre parentesis hay un /, la ultima casilla del vector se hace 
+            //1 y se borra el / del string
             if(stringAux.charAt(stringAux.length()-1)=='/'){
                 vectorAux[vectorAux.length-1]="1";
                 stringAux=stringAux.substring(0,stringAux.length()-1);
@@ -294,6 +300,7 @@ public class GUI extends javax.swing.JFrame {
             vectorAux[0]=stringAux.substring(0,intAux);
             stringAux= stringAux.substring(intAux+1,stringAux.length()-1);
 
+            //se comprueba si hay mas parentesis para saber si es una transicion no deterministica
             if(stringAux.contains("(")&&stringAux.contains(")")){
                 intAux = stringAux.indexOf("(");
                 intAux2 = stringAux.indexOf(")");
