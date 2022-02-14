@@ -17,7 +17,9 @@ public class GUI extends javax.swing.JFrame {
     
     private String simbolos;
     private String estadosTransiciones;
-    private String[][] automata;
+    private String[][] automataMatriz;
+    private ArrayList<String[]> automataFilas;
+    private String tipoAF;
     /**
      * Creates new form GUI
      */
@@ -43,7 +45,7 @@ public class GUI extends javax.swing.JFrame {
         estadosText = new javax.swing.JTextField();
         consAF = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
-        tipoAF = new javax.swing.JComboBox<>();
+        tipoAFCB = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -82,7 +84,7 @@ public class GUI extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         jLabel4.setText("Tipo de automata");
 
-        tipoAF.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Deterministico", "No deterministico" }));
+        tipoAFCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Deterministico", "No deterministico" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -96,7 +98,8 @@ public class GUI extends javax.swing.JFrame {
                         .addComponent(jLabel4)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGap(57, 57, 57))
+                            .addGap(39, 39, 39)
+                            .addComponent(info1))
                         .addComponent(simbolosText)
                         .addComponent(estadosText)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -106,10 +109,8 @@ public class GUI extends javax.swing.JFrame {
                         .addGroup(layout.createSequentialGroup()
                             .addGap(29, 29, 29)
                             .addComponent(consAF))
-                        .addComponent(tipoAF, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(info1)
-                .addGap(19, 19, 19))
+                        .addComponent(tipoAFCB, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(43, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -131,7 +132,7 @@ public class GUI extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tipoAF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tipoAFCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
                 .addComponent(consAF)
                 .addGap(30, 30, 30))
@@ -152,8 +153,9 @@ public class GUI extends javax.swing.JFrame {
     
     private void consAFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_consAFActionPerformed
         // TODO add your handling code here:
-        simbolos = simbolosText.getText();
-        estadosTransiciones = estadosText.getText();
+        this.simbolos = simbolosText.getText();
+        this.estadosTransiciones = estadosText.getText();
+        this.tipoAF = String.valueOf(tipoAFCB.getSelectedItem());
         
         simbolos.replace(" ", "");
         estadosTransiciones.replace(" ", "");
@@ -163,12 +165,12 @@ public class GUI extends javax.swing.JFrame {
         }
         else{
             if(verificarEntradaSimbolos(simbolos)&& verificarEntradaEstados(estadosTransiciones)){
-                if(contruirAutomata(simbolos, estadosTransiciones)){
+                if(construirAutomata(simbolos, estadosTransiciones)){
                     JOptionPane.showMessageDialog(rootPane, "Su automata se ha construido con exito");
-                    GUI2 validacion =new GUI2();
+                    GUI2 validacion =new GUI2(automataMatriz,automataFilas);
                     validacion.setVisible(true);
                     validacion.setLocationRelativeTo(null);
-                    validacion.automata = automata;
+                    
                 }
                 else{
                     JOptionPane.showMessageDialog(rootPane, "Hubo un error al construir el automata, es posible que el formato de ingreso le falten o sobren caracteres");
@@ -185,91 +187,150 @@ public class GUI extends javax.swing.JFrame {
      * @param simbolosV String que contiene los simbolos del automata
      * @param estadosV String que contiene los estados y transiciones del automata
      */
-    private boolean contruirAutomata(String simbolosV, String estadosV){
+    private boolean construirAutomata(String simbolosV, String estadosV){
+        if(tipoAF.equals("Deterministico")){
+            ArrayList<String[]> lista = new ArrayList();
+            int comas = contarCaracter(simbolosV, ',');
+            String[] vectorAux=new String[comas+3];
+
+            vectorAux[0]=" ";
+            vectorAux[vectorAux.length-1]=" ";
+
+            vectorAux=simbolosVector(simbolosV, vectorAux);
+
+            lista.add(vectorAux);
+
+
+            while (true) {
+                vectorAux = new String[comas+3];
+                int intAux1=estadosV.indexOf("(");          
+                int intAux2=estadosV.indexOf(")");
+                String stringAux="";
+
+                if(intAux2!=estadosV.length()-1){
+                    if(estadosV.charAt(intAux2+1)=='/'){
+                        vectorAux[vectorAux.length -1]="1";
+                        if(intAux2+1==estadosV.length()-1){
+                            estadosV=estadosV.substring(0,intAux2+1);
+                        }
+                        else{
+                            estadosV=estadosV.substring(0,intAux2+1) + estadosV.substring(intAux2+2);
+                        }
+
+                    }
+                    else{
+                    vectorAux[vectorAux.length -1]="0";
+                    }    
+                }
+                else{
+                    vectorAux[vectorAux.length -1]="0";
+                } 
+
+                vectorAux[0]=estadosV.substring(0,intAux1);
+                estadosV=estadosV.substring(intAux1+1);
+
+                intAux2=estadosV.indexOf(")");
+                stringAux = estadosV.substring(0,intAux2);
+                if(contarCaracter(stringAux, ',')!=vectorAux.length -3){
+                    return(false);
+                }
+                //Casualmente este metodo que era para los simbolos tambien me sirve 
+                //para esta parte de los estados y transiciones
+                lista.add(simbolosVector(stringAux, vectorAux));
+
+
+                if(intAux2==estadosV.length()-1){
+                    arrayLToMatriz(lista);
+                    return(true);
+                }
+                else{
+                    estadosV = estadosV.substring(intAux2+2);
+                }
+            } 
+        }
+        else{
+            return(construirAutomataND(simbolosV,estadosV));
+        }
+    }
+    
+    /**
+     * Utiliza los string procesados para contruir el automata No Deterministico
+     * expresado en estos
+     * @param simbolosV String que contiene los simbolos del automata
+     * @param estadosV String que contiene los estados y transiciones del automata
+     * @return 
+     */
+    private boolean construirAutomataND(String simbolosV, String estadosV){
         ArrayList<String[]> lista = new ArrayList();
         int comas = contarCaracter(simbolosV, ',');
+        int intAux=0;
+        int intAux2=0;
         String[] vectorAux=new String[comas+3];
-        
+
         vectorAux[0]=" ";
         vectorAux[vectorAux.length-1]=" ";
 
         vectorAux=simbolosVector(simbolosV, vectorAux);
-        
+
         lista.add(vectorAux);
-        
-        
-        while (true) {
+        estadosV = estadosV + "- ";
+
+        while(true){
             vectorAux = new String[comas+3];
-            int intAux1=estadosV.indexOf("(");          
-            int intAux2=estadosV.indexOf(")");
-            String stringAux="";
-            
-            if(intAux2!=estadosV.length()-1){
-                if(estadosV.charAt(intAux2+1)=='/'){
-                    vectorAux[vectorAux.length -1]="1";
-                    if(intAux2+1==estadosV.length()-1){
-                        estadosV=estadosV.substring(0,intAux2+1);
-                    }
-                    else{
-                        estadosV=estadosV.substring(0,intAux2+1) + estadosV.substring(intAux2+2);
-                    }
-                    
-                }
-                else{
-                vectorAux[vectorAux.length -1]="0";
-                }    
+            intAux =estadosV.indexOf("-");
+            intAux2 =0;
+            String stringAux = estadosV.substring(0,intAux);
+            estadosV=estadosV.substring(intAux+1);
+
+            if(stringAux.charAt(stringAux.length()-1)=='/'){
+                vectorAux[vectorAux.length-1]="1";
+                stringAux=stringAux.substring(0,stringAux.length()-1);
             }
             else{
-                vectorAux[vectorAux.length -1]="0";
-            } 
+                vectorAux[vectorAux.length-1]="0";
+            }
 
-            vectorAux[0]=estadosV.substring(0,intAux1);
-            estadosV=estadosV.substring(intAux1+1);
-            
-            intAux2=estadosV.indexOf(")");
-            stringAux = estadosV.substring(0,intAux2);
-            if(contarCaracter(stringAux, ',')!=vectorAux.length -3){
+            intAux = stringAux.indexOf("(");
+            vectorAux[0]=stringAux.substring(0,intAux);
+            stringAux= stringAux.substring(intAux+1,stringAux.length()-1);
+
+            if(stringAux.contains("(")&&stringAux.contains(")")){
+                intAux = stringAux.indexOf("(");
+                intAux2 = stringAux.indexOf(")");
+                if(intAux2==stringAux.length()-1){
+                    stringAux= stringAux.substring(0,intAux) +stringAux.substring(intAux+1, intAux2).replace(',', '-');
+                }
+                else{
+                    stringAux= stringAux.substring(0,intAux) + stringAux.substring(intAux+1, intAux2).replace(',', '-') + stringAux.substring(intAux2+1);
+                }
+            }
+            else if(stringAux.contains("(")||stringAux.contains(")")){
                 return(false);
             }
-            //Casualmente este metodo que era para los simbolos tambien me sirve 
-            //para esta parte de los estados y transiciones
+            
+
             lista.add(simbolosVector(stringAux, vectorAux));
-            
-            
-            if(intAux2==estadosV.length()-1){
+            if(estadosV.equals(" ")){
                 arrayLToMatriz(lista);
                 return(true);
             }
-            else{
-                estadosV = estadosV.substring(intAux2+2);
-            }
-        }  
+        }
     }
-    
     /**
      * Con un ArrayList de vectores contruye una matriz que representa unautomata
      * donde estos vectores son las filas de la matriz.
      * @param lista 
      */
     private void arrayLToMatriz(ArrayList<String[]> lista){
-        automata = new String[lista.size()][lista.get(0).length];
+        this.automataFilas = lista;
+        this.automataMatriz = new String[lista.size()][lista.get(0).length];
         
         for (int i = 0; i <lista.size(); i++) {
             for (int j = 0; j <lista.get(0).length; j++) {
-                automata[i][j]=lista.get(i)[j]; 
+                automataMatriz[i][j]=lista.get(i)[j]; 
             }
             
-        }
-        
-        //Esto solo es para comprobar en consola que si funciona
-        System.out.println("Acá"+lista.size());
-        for (int i = 0; i <lista.size(); i++) {
-            for (int j = 0; j <lista.get(0).length; j++) {
-                System.out.println(automata[i][j]);
-            }
-            
-        }
-        
+        } 
     }
     
     /**
@@ -388,6 +449,6 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JTextField simbolosText;
-    private javax.swing.JComboBox<String> tipoAF;
+    private javax.swing.JComboBox<String> tipoAFCB;
     // End of variables declaration//GEN-END:variables
 }

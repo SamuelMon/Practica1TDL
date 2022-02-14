@@ -5,19 +5,30 @@
  */
 package practica.pkg1.tdl;
 
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author monto
  */
 public class GUI2 extends javax.swing.JFrame {
 
-    public String[][] automata;
+    public String[][] automataMatrizG2;
+    private DefaultTableModel modelo;
+    public ArrayList<String[]> automataFliasG2;
     
     /**
      * Creates new form GUI2
      */
-    public GUI2() {
+    public GUI2(String[][] automataM,ArrayList<String[]> automataF) {
         initComponents();
+        
+        this.automataFliasG2=automataF;
+        this.automataMatrizG2 = automataM;
+        
+        mostrarAutomata();
     }
 
     /**
@@ -31,20 +42,20 @@ public class GUI2 extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tablaAutomata = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
         infoHilera = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
+        hileraText = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jButton1 = new javax.swing.JButton();
+        transYvalid = new javax.swing.JTextArea();
+        validar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
         jLabel1.setText("Procesamiento de hileras");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tablaAutomata.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -52,30 +63,40 @@ public class GUI2 extends javax.swing.JFrame {
 
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tablaAutomata);
 
         jLabel2.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         jLabel2.setText("Ingrese hilera a validar:");
 
         infoHilera.setText("?");
+        infoHilera.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                infoHileraActionPerformed(evt);
+            }
+        });
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane2.setViewportView(jTextArea1);
+        transYvalid.setColumns(20);
+        transYvalid.setRows(5);
+        jScrollPane2.setViewportView(transYvalid);
 
-        jButton1.setText("Validar");
+        validar.setText("Validar");
+        validar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                validarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(201, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addGap(199, 199, 199))
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 80, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -83,13 +104,13 @@ public class GUI2 extends javax.swing.JFrame {
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(infoHilera))
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(hileraText, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(79, 79, 79))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(58, 58, 58))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButton1)
+                        .addComponent(validar)
                         .addGap(139, 139, 139))))
         );
         layout.setVerticalGroup(
@@ -105,9 +126,9 @@ public class GUI2 extends javax.swing.JFrame {
                             .addComponent(jLabel2)
                             .addComponent(infoHilera))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(hileraText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(41, 41, 41)
-                        .addComponent(jButton1)
+                        .addComponent(validar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
@@ -115,6 +136,135 @@ public class GUI2 extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void validarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validarActionPerformed
+        // TODO add your handling code here:
+        reconocerHilera(hileraText.getText());
+    }//GEN-LAST:event_validarActionPerformed
+
+    private void infoHileraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoHileraActionPerformed
+        // TODO add your handling code here:
+        JOptionPane.showMessageDialog(rootPane,"Ingrese una hilera compuesta por los simbolos de entrada\nque reconoce el automata para que esta sea validada.");
+    }//GEN-LAST:event_infoHileraActionPerformed
+
+    /**
+     * Reconoce si la hilera ingresada es valida o no basandose en en automata
+     * ingresado
+     * @param hilera 
+     */
+    public void reconocerHilera(String hilera){
+        int filaEstado = 1;
+        String estado=automataMatrizG2[1][0];
+        hilera = hilera+"-";
+        String transiciones = "";
+        
+        while(true){
+            if(hilera.charAt(0)=='-'){
+                break;
+            }
+            else{
+                transiciones = transiciones + hilera.charAt(0) + " " + estado + "->" + automataMatrizG2[filaEstado][buscarColumnaEntrada(String.valueOf(hilera.charAt(0)))]+ "\n";
+                estado=automataMatrizG2[filaEstado][buscarColumnaEntrada(String.valueOf(hilera.charAt(0)))];
+                hilera = hilera.substring(1);
+                filaEstado = buscarFilaEstado(estado);
+            }
+        }
+        
+        if(automataMatrizG2[filaEstado][automataMatrizG2[0].length -1].equals("1")){
+            transiciones = transiciones + "\nLa hilera ingresada es valida";
+        }
+        else{
+            transiciones = transiciones + "\nLa hilera ingresada no es valida";
+        }
+        transYvalid.setText("");
+        transYvalid.setText(transiciones);
+    }
+    
+    /**
+     * Busca la fila correspondiente al estado actual del automata
+     * @param simbolo
+     * @return 
+     */
+    private int buscarFilaEstado(String simbolo){
+        for (int i = 1; i < automataFliasG2.size(); i++) {
+            if(automataMatrizG2[i][0].equals(simbolo)){
+                return(i);
+            }
+        }
+        return(1);
+    }
+    
+    /**
+     * Busca la columna correspondiente al simbolo de entrada que se esta leyendo
+     * @param simbolo
+     * @return 
+     */
+    private int buscarColumnaEntrada(String simbolo){
+        for (int i = 1; i < automataMatrizG2[0].length-1; i++) {
+            if(automataMatrizG2[0][i].equals(simbolo)){
+                return(i);
+            }
+        }
+        return(1);
+    }
+    
+    /*
+    public void reconocerHilera(String hilera){
+        int punterof=1;
+        int punteroc=1;
+        String transiciones = "";
+        String estado= automataMatrizG2[punterof][0];
+        char sEntrada=' ';
+        
+        for (int i=0 ; i <hilera.length() ; i++){
+            sEntrada=hilera.charAt(i);
+            
+            for (int j=1; j < automataMatrizG2[0].length-1; j++){
+                if (Character.toString(sEntrada).equals(automataMatrizG2[0][j])){
+                    punteroc=j;
+                }
+                
+            }
+            
+            for (int k=1; k < automataMatrizG2[0].length-1 ; k++){
+                if (estado.equals(automataMatrizG2[k][0])){
+                    punterof=k;
+                }
+            }
+            
+            transiciones= transiciones + sEntrada +" " + estado + "->" + automataMatrizG2[punterof][punteroc] + "\n";
+            estado = automataMatrizG2[punterof][punteroc];
+            
+            for (int k=1; k < automataMatrizG2[0].length-1 ; k++){
+                if (estado.equals(automataMatrizG2[k][0])){
+                    punterof=k;
+                    System.out.println(punterof);
+                }
+            }
+            
+        }
+        if(automataMatrizG2[punterof][automataMatrizG2[0].length -1].equals("1")){
+            transiciones = transiciones + "\nLa hilera ingresada es valida";
+            /**System.out.println(punterof);
+            System.out.println(automataMatrizG2[0].length -1);
+            System.out.println(automataMatrizG2[2][3]);
+        }
+        else{
+            transiciones = transiciones + "\nLa hilera ingresada no es valida";
+        }
+        transYvalid.setText("");
+        transYvalid.setText(transiciones);
+    }**/
+    
+    public void mostrarAutomata(){
+        modelo = (DefaultTableModel)tablaAutomata.getModel();
+        modelo.setColumnCount(automataFliasG2.get(0).length -1);
+        modelo.setColumnIdentifiers(automataFliasG2.get(0));
+        
+        for (int i = 1; i <automataFliasG2.size(); i++) {
+            modelo.addRow(automataFliasG2.get(i));
+        }
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -145,20 +295,20 @@ public class GUI2 extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new GUI2().setVisible(true);
+                //new GUI2().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField hileraText;
     private javax.swing.JButton infoHilera;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTable tablaAutomata;
+    private javax.swing.JTextArea transYvalid;
+    private javax.swing.JButton validar;
     // End of variables declaration//GEN-END:variables
 }
